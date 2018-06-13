@@ -31,14 +31,14 @@ import java.util.Random;
 public class RecyclerViewActivity extends AppCompatActivity {
 
     private static final String shareStr[] = {
-            "微信","QQ","空间","微博","GitHub","CJJ测试\nRecyclerView自适应","微信朋友圈","短信","推特","遇见"
+            "微信","QQ","空间","微博","GitHub","CJJ测试\nRecyclerView自适应","微信朋友圈","短信","推特","遇见微信","QQ","空间","微博","GitHub"
     };
 
     private ArrayList<ShoppingDetail> namelist = new ArrayList<>();
     private int number;
 
     public BottomSheetBehavior behavior;
-    public RecyclerView recyclerView;
+    public RecyclerView recyclerView,listview;
     public View blackView;
 
     @Override
@@ -59,16 +59,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
         CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.cl);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        SimpleStringRecyclerViewAdapter simpleStringRecyclerViewAdapter = new SimpleStringRecyclerViewAdapter(this);
-//
-//        simpleStringRecyclerViewAdapter.setItemClickListener(new SimpleStringRecyclerViewAdapter.ItemClickListener() {
-//            @Override
-//            public void onItemClick(int pos) {
-//                behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-//                Toast.makeText(RecyclerViewActivity.this, "pos--->" + pos, Toast.LENGTH_LONG).show();
-//            }
-//        });
-//        recyclerView.setAdapter(simpleStringRecyclerViewAdapter);
+
         final ShoppingCarListAdapter shoppingCarListAdapter = new ShoppingCarListAdapter(this, namelist);
         shoppingCarListAdapter.setRemoveClickListener(new ShoppingCarListAdapter.RemoveClickListener() {
             @Override
@@ -98,6 +89,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
         recyclerView.setAdapter(shoppingCarListAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         behavior = BottomSheetBehavior.from(recyclerView);
+
         behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -118,9 +110,26 @@ public class RecyclerViewActivity extends AppCompatActivity {
         findViewById(R.id.tv).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (behavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
                     behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                } else {
+                    behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                }
             }
         });
+
+        listview = (RecyclerView) findViewById(R.id.listview);
+        listview.setLayoutManager(new LinearLayoutManager(this));
+
+        SimpleStringRecyclerViewAdapter simpleStringRecyclerViewAdapter = new SimpleStringRecyclerViewAdapter(this, namelist);
+        simpleStringRecyclerViewAdapter.setItemClickListener(new SimpleStringRecyclerViewAdapter.ItemClickListener() {
+            @Override
+            public void onItemClick(int pos) {
+                Toast.makeText(RecyclerViewActivity.this, "pos--->" + pos, Toast.LENGTH_LONG).show();
+            }
+        });
+        listview.setAdapter(simpleStringRecyclerViewAdapter);
+        listview.setItemAnimator(new DefaultItemAnimator());
 
         blackView = findViewById(R.id.blackview);
         blackView.setBackgroundColor(Color.parseColor("#60000000"));
@@ -153,76 +162,5 @@ public class RecyclerViewActivity extends AppCompatActivity {
         return list;
     }
 
-    public static class SimpleStringRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleStringRecyclerViewAdapter.ViewHolder> {
-
-        public ItemClickListener mItemClickListener;
-
-        public void setItemClickListener(ItemClickListener listener) {
-            mItemClickListener = listener;
-        }
-
-        public interface ItemClickListener {
-            public void onItemClick(int pos);
-        }
-
-        private Context mContext;
-
-        public static class ViewHolder extends RecyclerView.ViewHolder {
-
-            public final ImageView mImageView;
-            public final TextView mTextView;
-
-            public ViewHolder(View view) {
-                super(view);
-                mImageView = (ImageView) view.findViewById(R.id.avatar);
-                mTextView = (TextView) view.findViewById(R.id.tv);
-            }
-
-
-        }
-
-        public SimpleStringRecyclerViewAdapter(Context context) {
-            super();
-            mContext = context;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.list_item, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, final int position) {
-//            if (position == 0) {
-//                holder.mImageView.setImageResource(R.drawable.a6);
-//            } else if (position == 1) {
-//                holder.mImageView.setImageResource(R.drawable.a5);
-//            }
-//
-//            holder.mImageView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-////                    Toast.makeText(mContext, "pos --->" + position, Toast.LENGTH_SHORT).show();
-//                    mItemClickListener.onItemClick(position);
-//                }
-//            });
-
-            holder.mTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-//                    Toast.makeText(mContext, "pos --->" + position, Toast.LENGTH_SHORT).show();
-                    mItemClickListener.onItemClick(position);
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return 3;
-        }
-    }
 
 }
